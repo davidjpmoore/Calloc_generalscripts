@@ -87,15 +87,21 @@ data.frame(sites)
 nldc <- raster("nlcd_2011_landcover_2011_edition_2014_10_10/nlcd_2011_landcover_2011_edition_2014_10_10.img")
 
 # sites <- read.csv("DOE_sites_ross_sampled.csv")
-sites <- SpatialPointsDataFrame(coords=sites[,c("long", "lat")], sites, proj4string=CRS("+proj=longlat +datum=WGS84"))
+# sites <- SpatialPointsDataFrame(coords=sites[,c("long", "lat")], sites, proj4string=CRS("+proj=longlat +datum=WGS84"))
 sites <- spTransform(sites, projection(nldc))
 summary(sites)
+
+# Making a
+usa <- map("state", plot=F, fill=T)
+ids <- sapply(strsplit(usa$names, ":"), function(x) x[1])
+usa.sp <- map2SpatialLines(usa, IDs=usa$names, proj4string=CRS("+proj=longlat +datum=WGS84"))
+usa.sp <- spTransform(usa.sp, projection(nldc))
 
 # A quick-and-dirty plotting of the ecosystems -- 
 # note: there should be more customizeable ways to do this with GGPLOT, but I haven't tried it yet
 pdf("DOE_LandCover_NLDC.pdf")
 plot(nldc)
-map("state", plot=T, add=T, lty="solid", col="gray30", lwd=1.5)
+plot(usa.sp, add=T, lwd=1, col="gray30")
 plot(sites[,], pch=01, add=T, col="black", cex=2, lwd=3,)
 plot(sites[sites$site.name=="Valles Caldera Mixed Conifer",], pch=08, add=T, col="firebrick3", cex=3, lwd=6)
 dev.off()
