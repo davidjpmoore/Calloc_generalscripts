@@ -87,7 +87,7 @@ data.frame(sites)
 nldc <- raster("nlcd_2011_landcover_2011_edition_2014_10_10/nlcd_2011_landcover_2011_edition_2014_10_10.img")
 
 # sites <- read.csv("DOE_sites_ross_sampled.csv")
-# sites <- SpatialPointsDataFrame(coords=sites[,c("long", "lat")], sites, proj4string=CRS("+proj=longlat +datum=WGS84"))
+sites <- SpatialPointsDataFrame(coords=sites[,c("long", "lat")], sites, proj4string=CRS("+proj=longlat +datum=WGS84"))
 sites <- spTransform(sites, projection(nldc))
 summary(sites)
 
