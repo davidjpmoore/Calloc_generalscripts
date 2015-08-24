@@ -1,3 +1,14 @@
+<<<<<<< HEAD
 .Rproj.user
 .Rhistory
 .RData
+=======
+
+.history
+.Rhistory
+*.RData
+nlcd_2011_landcover_2011_edition_2014_10_10/
+labeled_ecosystems_30m/
+*.pdf
+*.csv
+>>>>>>> b2a5e6d386c62ed35094bb263931a980d8c7ac20

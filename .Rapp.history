@@ -1,0 +1,696 @@
+################################################################################
+# Making a map of Ross's Ameriflux study sites with Ecosystem Types Underneath#
+# -----------------------------------------------------------------------------#
+##
+# --------------------------#
+# General Workflow#
+# --------------------------#
+# 1. Read, Plot, & Extract USGS Ecosystem Layer#
+#    -- More detail available at: http://rmgsc.cr.usgs.gov/ecosystems/index.shtml#
+#    -- Data downloadable at: http://rmgsc.cr.usgs.gov/outgoing/ecosystems/USdata/#
+#           select labeled_ecosystems_30m.zip for the files used here#
+#           other files may be of interest for analyses as well#
+# 2. Read, Format, & Plot NLDC land cover layer#
+#    -- More detail available at: http://www.mrlc.gov/nlcd2011.php#
+#    -- Data downloadable at: http://www.mrlc.gov/nlcd11_data.php#
+#           select "NLCD 2011 Land Cover"#
+#           other files may be of interest for analyses as well#
+# #
+# --------------------------#
+##
+################################################################################
+#
+# --------------------------#
+# Load Libraries#
+# --------------------------#
+library(raster)#
+library(rgdal)#
+library(maptools)#
+library(proj4)#
+library(sp)#
+library(maps)#
+library(rasterVis)#
+library(rgeos)#
+library(car)
+require(raster)
+install.packages("raster")
+install.packages("raster", "rgdal", "maptools", "proj4", "sp", "maps","rasterVis", "rgeos", "car")
+install.packages("rgdal")
+install.packages("maptools")
+install.packages("proj4")
+install.packages("sp")
+install.packages("maps")
+install.packages("rasterVis")
+install.packages("rgeos")
+install.packages("car")
+library(raster)#
+library(rgdal)#
+library(maptools)#
+library(proj4)#
+library(sp)#
+library(maps)#
+library(rasterVis)#
+library(rgeos)#
+library(car)
+library(raster)
+library(rgdal)
+library(sp)
+library(rgdal)
+library(maptools)
+library(proj4)
+library(sp)
+library(maps)
+library(rasterVis)
+library(rgeos)
+library(car)
+sites <- read.csv("DOE_sites_ross_sampled.csv")#
+sites <- SpatialPointsDataFrame(coords=sites[,c("long", "lat")], sites, proj4string=CRS("+proj=longlat +datum=WGS84"))#
+summary(sites)
+ecosystems <- raster("labeled_ecosystems_30m/final_labeled_prod4_mmu9pxl_30m_dd83_w_subsec.img")#
+ecosystems
+# reading in the csv I manually converted from a .dbf file. #
+# (R can probably handle .dbf, but I didn't try)#
+ecosys.meta <- read.csv("labeled_ecosystems_30m/final_labeled_prod4_mmu9pxl_30m_dd83_w_subsec.img.vat.csv")#
+summary(ecosys.meta)
+ecosys.meta <- read.csv("labeled_ecosystems_30m/final_labeled_prod4_mmu9pxl_30m_dd83_w_subsec.img.vat.csv")
+update.packages()
+y
+y#
+y
+library(raster)#
+library(rgdal)#
+library(maptools)#
+library(proj4)#
+library(sp)#
+library(maps)#
+library(rasterVis)#
+library(rgeos)#
+library(car)
+update.packages(rgdal)
+update.packages("rgdal")
+update.packages("sp")
+install.packages("rgdal")
+library(raster)
+library(rgdal)
+update.packages("rgdal")
+install.packages("rgdal")
+update.packages("rgdal")
+library(maptools)
+library(proj4)
+library(sp)
+library(maps)
+library(rasterVis)
+library(rgeos)
+update.packages("sp")
+update("rgeos")
+update.packages("rgeos")
+library(car)
+update.packages()
+library(raster)
+library(rgdal)
+library(maptools)
+library(proj4)
+library(sp)
+library(maps)
+library(rasterVis)
+library(rgeos)
+library(car)
+install.packages("sp", dependencies+T)
+install.packages("sp", dependencies=T)
+library(raster)
+install.packages("raster")
+install.packages("rgdal")
+install.packages("maptools")
+install.packages("proj4")
+install.packages("sp")
+install.packages("maps")
+install.packages("rasterVis")
+install.packages("rgeos")
+install.packages("car")
+library(raster)
+library(rgdal)
+library(maptools)
+library(proj4)
+library(sp)
+library(maps)
+library(rasterVis)
+library(rgeos)
+library(car)
+install.packages("dplR")
+install.packages("ggplot2")
+install.packages("lattice")
+install.packages("reshape")
+install.packages("mgcv")
+install.packages("nlme")
+install.packages("lmeSplines")
+install.packages("splines")
+install.packages("MASS")
+install.packages("MuMln")
+install.packages("MuMIn")
+### $Id: splines.R,v 1.2 1999/11/09 20:54:22 bates Exp $#
+#
+bs <-#
+  function(x, df = NULL, knots = NULL, degree = 3, intercept = FALSE,#
+           Boundary.knots = range(x))#
+{#
+  nx <- names(x)#
+  x <- as.vector(x)#
+  nax <- is.na(x)#
+  if(nas <- any(nax))#
+    x <- x[!nax]#
+  if(!missing(Boundary.knots)) {#
+    Boundary.knots <- sort(Boundary.knots)#
+    outside <- (ol <- x < Boundary.knots[1]) | (or <- x > Boundary.knots[2])#
+  }#
+  else outside <- FALSE #rep(FALSE, length = length(x))#
+#
+  ord <- 1 + (degree <- as.integer(degree))#
+  if(ord <= 1) stop("degree must be integer >= 1")#
+  if(!missing(df) && missing(knots)) {#
+    nIknots <- df - ord + (1 - intercept)#
+    if(nIknots < 0) {#
+      nIknots <- 0#
+      warning(paste("df was too small; have used ", ord - (1 - intercept)))#
+    }#
+    knots <-#
+    if(nIknots > 0) {#
+      knots <- seq(from = 0, to = 1, length = nIknots + 2)[-c(1, nIknots + 2)]#
+        quantile(x[!outside], knots)#
+    }#
+  }#
+  Aknots <- sort(c(rep(Boundary.knots, ord), knots))#
+  if(any(outside)) {#
+    warning("Some x values beyond boundary knots may cause ill-conditioned bases")#
+    derivs <- 0:degree#
+    scalef <- gamma(1:ord)# factorials#
+    basis <- array(0, c(length(x), length(Aknots) - degree - 1))#
+    if(any(ol)) {#
+      k.pivot <- Boundary.knots[1]#
+      xl <- cbind(1, outer(x[ol] - k.pivot, 1:degree, "^"))#
+      tt <- spline.des(Aknots, rep(k.pivot, ord), ord, derivs)$design#
+      basis[ol,  ] <- xl %*% (tt/scalef)#
+    }#
+    if(any(or)) {#
+      k.pivot <- Boundary.knots[2]#
+      xr <- cbind(1, outer(x[or] - k.pivot, 1:degree, "^"))#
+      tt <- spline.des(Aknots, rep(k.pivot, ord), ord, derivs)$design#
+      basis[or,  ] <- xr %*% (tt/scalef)#
+    }#
+    if(any(inside <- !outside))#
+      basis[inside,  ] <- spline.des(Aknots, x[inside], ord)$design#
+  }#
+  else basis <- spline.des(Aknots, x, ord)$design#
+  if(!intercept)#
+    basis <- basis[, -1 , drop = FALSE]#
+  n.col <- ncol(basis)#
+  if(nas) {#
+    nmat <- matrix(NA, length(nax), n.col)#
+    nmat[!nax,  ] <- basis#
+    basis <- nmat#
+  }#
+  dimnames(basis) <- list(nx, 1:n.col)#
+  a <- list(degree = degree, knots = knots, Boundary.knots = #
+            Boundary.knots, intercept = intercept, class = c("bs", "basis"))#
+  attributes(basis) <- c(attributes(basis), a)#
+  basis#
+}#
+#
+ns <-#
+  function(x, df = NULL, knots = NULL, intercept = FALSE,#
+           Boundary.knots = range(x))#
+{#
+  nx <- names(x)#
+  x <- as.vector(x)#
+  nax <- is.na(x)#
+  if(nas <- any(nax))#
+    x <- x[!nax]#
+  if(!missing(Boundary.knots)) {#
+    Boundary.knots <- sort(Boundary.knots)#
+    outside <- (ol <- x < Boundary.knots[1]) | (or <- x > Boundary.knots[2])#
+  }#
+  else outside <- FALSE # rep(FALSE, length = length(x))#
+  if(!missing(df) && missing(knots)) {#
+    ## df = number(interior knots) + 1 + intercept#
+    nIknots <- df - 1 - intercept#
+    if(nIknots < 0) {#
+      nIknots <- 0#
+      warning(paste("df was too small; have used ", 1 + intercept))#
+    }#
+    if(nIknots > 0) {#
+      knots <- seq(from = 0, to = 1, length = nIknots + 2)[-c(1, nIknots + 2)]#
+      knots <- quantile(x[!outside], knots)#
+    }#
+    else knots <- NULL#
+  } else nIknots <- length(knots)#
+  Aknots <- sort(c(rep(Boundary.knots, 4), knots))#
+  if(any(outside)) {#
+    basis <- array(0, c(length(x), nIknots + 4))#
+    if(any(ol)) {#
+      k.pivot <- Boundary.knots[1]#
+      xl <- cbind(1, x[ol] - k.pivot)#
+      tt <- spline.des(Aknots, rep(k.pivot, 2), 4, c(0, 1))$design#
+      basis[ol,  ] <- xl %*% tt#
+    }#
+    if(any(or)) {#
+      k.pivot <- Boundary.knots[2]#
+      xr <- cbind(1, x[or] - k.pivot)#
+      tt <- spline.des(Aknots, rep(k.pivot, 2), 4, c(0, 1))$design#
+      basis[or,  ] <- xr %*% tt#
+    }#
+    if(any(inside <- !outside))#
+      basis[inside,  ] <- spline.des(Aknots, x[inside], 4)$design#
+  }#
+  else basis <- spline.des(Aknots, x, 4)$design#
+  const <- spline.des(Aknots, Boundary.knots, 4, c(2, 2))$design#
+  if(!intercept) {#
+    const <- const[, -1 , drop = FALSE]#
+    basis <- basis[, -1 , drop = FALSE]#
+  }#
+  qr.const <- qr(t(const))#
+  basis <- as.matrix((t(qr.qty(qr.const, t(basis))))[,  - (1:2)])#
+  n.col <- ncol(basis)#
+  if(nas) {#
+    nmat <- matrix(NA, length(nax), n.col)#
+    nmat[!nax,  ] <- basis#
+    basis <- nmat#
+  }#
+  dimnames(basis) <- list(nx, 1:n.col)#
+  a <- list(degree = 4, knots = knots, Boundary.knots = Boundary.knots, #
+            intercept = intercept, class = c("ns", "basis"))#
+  attributes(basis) <- c(attributes(basis), a)#
+  basis#
+}#
+#
+predict.bs <-#
+  function(object, newx, ...)#
+{#
+  if(missing(newx))#
+    return(object)#
+  a <- c(list(x = newx), attributes(object)[#
+                c("degree", "knots", "Boundary.knots", "intercept")])#
+  do.call("bs", a)#
+}#
+#
+predict.ns <-#
+  function(object, newx, ...)#
+{#
+  if(missing(newx))#
+    return(object)#
+  a <- c(list(x = newx), attributes(object)[#
+                c("knots", "Boundary.knots", "intercept")])#
+  do.call("ns", a)#
+}#
+#
+interp.spline <-#
+  function(x, y, ord = 4)#
+{#
+  x <- as.numeric(x)#
+  lenx <- length(x)#
+  y <- as.numeric(y)#
+  leny <- length(y)#
+  if(leny!=lenx)#
+    stop("Lengths of x and y must be equal")#
+  ind <- order(x)#
+  x <- x[ind]#
+  y <- y[ind]#
+  ordm1 <- ord - 1#
+  knots <- c(x[1:ordm1] + x[1] - x[ord], x,#
+             x[lenx + (1:ordm1) - ordm1] + x[lenx] - x[lenx - ordm1])#
+  derivs <- c(2, integer(lenx), 2)#
+  x <- c(x[1], x, x[lenx])#
+  sys.mat <- spline.des(knots, x, ord = ord, derivs = derivs)$design#
+  coeff <- solve(sys.mat, c(0, y, 0))#
+  list(knots = knots, coeff = coeff, order = ord)#
+}#
+#
+periodic.spline <-#
+  function(x, y, knots, period = 2 * pi, ord = 4)#
+{#
+  x <- as.vector(x, "double")#
+  y <- as.vector(y, "double")#
+  lenx <- length(x)#
+  if(lenx!=length(y))#
+    stop("Lengths of x and y must match")#
+  ind <- order(x)#
+  x <- x[ind]#
+  y <- y[ind]#
+  if(any((x[-1] - x[ - lenx]) <= 0))#
+    stop("Values of x must be strictly increasing")#
+  if(!missing(knots))#
+    period <- knots[length(knots) + 1 - ord] - knots[1]#
+  else knots <- c(x[(lenx - (ord - 2)):lenx] - period, x, x[1:ord] + #
+                  period)#
+  if((x[lenx] - x[1]) >= period)#
+    stop("The range of x values exceeds one period")#
+  coeff.mat <- spline.des(knots, x, ord)$design#
+  sys.mat <- coeff.mat[, (1:lenx)]#
+  sys.mat[, 1:(ord - 1)] <-#
+    sys.mat[, 1:(ord - 1)] + coeff.mat[, lenx + (1:(ord - 1))]#
+  qrstr <- qr(sys.mat)#
+  coeff <- qr.coef(qrstr, y)#
+  coeff <- c(coeff, coeff[1:(ord - 1)])#
+  list(knots = knots, coeff = coeff, order = ord,#
+       period = period, m = coeff.mat)#
+}#
+#
+spline.value <-#
+  function(bspstr, x = seq(knots[ord], knots[ncoeff + 1], len = lenx),#
+           deriv = 0, lenx = length(x))#
+{#
+  if(is.null(bspstr$knots))#
+    stop("bspstr must be a B-spline structure")#
+  if(missing(x) && missing(lenx))#
+    stop("either x or lenx must be given to spline.value")#
+  knots <- bspstr$knots#
+  ord <- bspstr$order#
+  ncoeff <- length(bspstr$coeff)#
+  x.orig <- x#
+  if(!is.null(period <- bspstr$period)) {#
+    ind <- x < knots[ord]#
+    if(any(ind))#
+      x[ind] <- x[ind] + period * (1 + (knots[ord] - x[ind]) %/% period)#
+    ind <- x > knots[ncoeff + 1]#
+    if(any(ind))#
+      x[ind] <- x[ind] - period * (1 + (x[ind] - knots[ncoeff + 1]) %/% period)#
+  }#
+  xind <- order(x)#
+  x <- x[xind]#
+  rind <- order(xind)#
+  z <- .C("spline_value",#
+          as.double(bspstr$knots),#
+          as.double(bspstr$coeff),#
+          as.integer(length(bspstr$coeff)),#
+          as.integer(bspstr$order),#
+          as.double(x),#
+          as.integer(lenx),#
+          as.integer(deriv),#
+          y = double(lenx))#
+  list(x = x.orig, y = z$y[rind])#
+}#
+#
+spline.des <- function(knots, x, ord = 4, derivs = integer(nx))#
+{#
+  ## "Design matrix" for a collection of B-splines.  `The' basic function.#
+  knots <- sort(as.vector(knots))#
+  x <- as.vector(x)#
+  nk <- length(knots)#
+  nx <- length(x)#
+  ind <- order(x)#
+  sortx <- x[ind]#
+  ind <- order(ind)#
+  if(sortx[1] < knots[ord] || sortx[nx] > knots[nk + 1 - ord])#
+    stop(paste("The x data must be in the range", knots[ord], "to",#
+               knots[nk + 1 - ord]))#
+  if(length(derivs)!=nx)#
+    stop("length of derivs must match length of x")#
+  ncoef <- nk - ord#
+  temp <- .C("spline_basis",#
+             as.double(knots),#
+             as.integer(ncoef),#
+             as.integer(ord),#
+             as.double(sortx),#
+             as.integer(derivs),#
+             as.integer(nx),#
+             design = array(0, c(ord, nx)),#
+             offsets = integer(nx))#
+  design <- array(0, c(nx, ncoef))#
+  d.ind <- array(c(rep(1:nx, rep(ord, nx)),#
+                   outer(1:ord, temp$offsets, "+")), c(nx * ord, 2))#
+  design[d.ind] <- temp$design#
+  list(knots = knots, order = ord, derivs = derivs, design = design[ind,  ])#
+}#
+#
+linear.interp <-#
+  function(x, y, x0 = seq(x[1], x[lenx], len = lenx0), lenx0 = length(x0))#
+{#
+  x <- as.numeric(x)#
+  y <- as.numeric(y)#
+  lenx <- length(x)#
+  if(length(y)!=lenx)#
+    stop("lengths of x and y must be the same")#
+  xind <- order(x)#
+  x <- x[xind]#
+  y <- y[xind]#
+  if(missing(x0) && missing(lenx0))#
+    stop("either x0 or lenx0 must be given")#
+  x0 <- as.numeric(x0)#
+  x0ind <- order(x0)#
+  x0ord <- x0[x0ind]#
+  nvals <- length(x0)#
+  if(x0ord[1] < x[1] || x0ord[nvals] > x[lenx])#
+    stop(paste("x0 values must be in the range", x[1], "to", x[lenx]))#
+  y <- .C("lin_interp",#
+          x,#
+          y,#
+          x0,#
+          y = double(nvals),#
+          as.integer(nvals))$y#
+  list(x = x0, y = y[order(x0ind)])#
+}
+library(raster)#
+library(rgdal)#
+library(maptools)#
+library(proj4)#
+library(sp)#
+library(maps)#
+library(rasterVis)#
+library(rgeos)#
+library(car)
+sites <- read.csv("DOE_sites_ross_sampled.csv")
+sites <- SpatialPointsDataFrame(coords=sites[,c("long", "lat")], sites, proj4string=CRS("+proj=longlat +datum=WGS84"))
+summary(sites)
+ecosystems <- raster("labeled_ecosystems_30m/final_labeled_prod4_mmu9pxl_30m_dd83_w_subsec.img")
+ecosystems
+ecosys.meta <- read.csv("labeled_ecosystems_30m/final_labeled_prod4_mmu9pxl_30m_dd83_w_subsec.img.vat.csv")
+# -----------------------------------#
+# Function for simple gapfilling of tree ring data#
+# This function will return a list with 2 levels: the data with gapfilling#
+# -----------------------------------#
+#
+gapfill.gamm <- function(data, DBH="DBH", Species.Use="Species", smooth.by="TreeID", Canopy.Class="Canopy.Class", canopy=F, plot.diagnostics=T, out.prefix){#
+#measured=T,#
+# -----------------------------------#
+# Model Arguments#
+# -----------------------------------#
+# data             = Tree ring data set, already subsetted with what you want to fit; #
+#                    must have the following columns:#
+#                        Year #
+#                        DBH  == DBH at time of sampling#
+#                        Species#
+#                        Site#
+#                        PlotID#
+#                        Canopy == Canopy class (Optional)#
+#                        TreeID (measured == T only)#
+#                        Species.Model (measured == F only)#
+# measured         = are we creating a model for trees which have at least some measurements (measured==T) or missing trees (measured==F); indicates whether to fit by #
+# canopy           = Use a canopy random effect#
+# plot.diagnostics = plot the measurements + modeled data for gapfilling#
+# save.gamm        = save .RData file of the gamm fit#
+# out.prefix       = file path and naming strategy for the plots and gamm RData file#
+# smooth.by        = what you're runnign the cubic smoothling spline on; should be by TreeID if you have measurements or by Plot or Species if you don't#
+# -----------------------------------#
+#
+# Making generic columns that will work with our model; not very elegant, but it works#
+data$Canopy       <- data[,Canopy.Class]#
+data$DBH          <- data[,DBH]#
+data$Species.Use  <- data[,Species.Use]#
+data$smooth.by    <- data[,smooth.by]#
+# Note: the log link with the gaussian family to prevent fitting negative values requires that you can't actually have 0 growth so we're going to make it really really small instead#
+data$RW <- ifelse(data$RW==0, 1e-6, data$RW)#
+#
+if(canopy==T){#
+	gamm.fill <- gamm(log(RW) ~ s(Year, bs="cs", k=3, by=smooth.by) + DBH, random=list(Species.Use=~1, Site=~1, PlotID=~1, Canopy=~1), data= data, na.action=na.omit)#
+} else {#
+	gamm.fill <- gamm(log(RW) ~ s(Year, bs="cs", k=3, by=smooth.by) + DBH, random=list(Species.Use=~1, Site=~1, PlotID=~1), data= data, na.action=na.omit)#
+}#
+#
+# Making Predicted ring widths#
+data$RW.modeled <- exp(predict(gamm.fill, data))#
+#
+# Graphing of the modeled rings we will use to fill the data (note this isn't truncating ones that are past where we think pith actually is)#
+if(plot.diagnostics==T)#
+pdf(paste0(out.prefix, "_gapfill.pdf"), height=7.5, width=10)#
+print(#
+ggplot() + facet_wrap(~Species) +#
+	geom_path(aes(x=Year, y=RW, color=Species.Use), data=data, size=0.5) +#
+	geom_point(aes(x=Year, y=RW.modeled), data[is.na(data$RW),], size=0.5) +#
+	scale_y_continuous(limits=c(0,1.25)) +#
+	theme_bw()#
+)#
+dev.off()#
+#
+out <- list()#
+out[["data"]] <- data#
+out[["gamm"]] <- gamm.fill#
+save(out, file=paste0(out.prefix, "_data_gamm.RData"))#
+#
+return(out)#
+#
+}
+#install required packages#
+#author: Dave Moore#
+#Date: 07/06/2015#
+#Purpose: Set up script to install all required packages before entering the workflow of Calloc_TreeRingNPP#
+#
+### If you have trouble with this script - please read :http://www.r-bloggers.com/installing-r-packages/ #
+install.packages("dplR")#
+#
+#"Dendrochronology Program Library in R" http://cran.r-project.org/web/packages/dplR/dplR.pdf#
+install.packages("lattice")#
+#
+#- graphics - http://cran.r-project.org/web/packages/lattice/index.html#
+#
+install.packages("reshape")#
+#
+#- data handling - melt and cast - http://cran.r-project.org/web/packages/reshape/#
+#
+install.packages("car")#
+#
+#- Fox Book functions - http://cran.r-project.org/web/packages/car/index.html#
+#
+install.packages("mgcv")#
+#
+#- generalised additive mixed effects models - http://cran.r-project.org/web/packages/mgcv/index.html#
+#
+install.packages("nlme")#
+#
+#- Gaussian linear and nonlinear mixed-effects models - http://cran.r-project.org/web/packages/nlme/index.html#
+#
+install.packages("lmeSplines")#
+#
+#- splines splines spines - http://cran.r-project.org/web/packages/lmeSplines/index.html#
+#
+install.packages("MASS")#
+#
+#- bag of stats functions -Venables and Ripley - http://cran.r-project.org/web/packages/MASS/index.html#
+#
+install.packages("MuMIn")#
+#
+#- information criteria & Model selection -http://cran.r-project.org/web/packages/MuMIn/index.html#
+#
+install.packages("ggplot2")#
+#
+#- Wickham's Graphics Grammar - http://cran.r-project.org/web/packages/ggplot2/index.html#
+#
+install.packages("grid")#
+#
+#Package ‘grid’ was removed from the CRAN repository. Formerly available versions can be obtained from the archive.#
+#
+install.packages("splines")#
+#
+#- Package ‘splines’ was removed from the CRAN repository. Formerly available versions can be obtained from the archive. Do not remove that package from the script. It is the basis for all of the gap filling to come. You can still pull the package out of the archive here: http://cran.r-project.org/src/contrib/Archive/splines/#
+##
+##
+#How do I install a package that has been removed from the archive: http://stackoverflow.com/questions/24194409/how-do-i-install-a-package-that-has-been-archived-from-cran
+################################################################################
+# Making a map of Ross's Ameriflux study sites with Ecosystem Types Underneath#
+# -----------------------------------------------------------------------------#
+##
+# --------------------------#
+# General Workflow#
+# --------------------------#
+# 1. Read, Plot, & Extract USGS Ecosystem Layer#
+#    -- More detail available at: http://rmgsc.cr.usgs.gov/ecosystems/index.shtml#
+#    -- Data downloadable at: http://rmgsc.cr.usgs.gov/outgoing/ecosystems/USdata/#
+#           select labeled_ecosystems_30m.zip for the files used here#
+#           other files may be of interest for analyses as well#
+# 2. Read, Format, & Plot NLDC land cover layer#
+#    -- More detail available at: http://www.mrlc.gov/nlcd2011.php#
+#    -- Data downloadable at: http://www.mrlc.gov/nlcd11_data.php#
+#           select "NLCD 2011 Land Cover"#
+#           other files may be of interest for analyses as well#
+# #
+# --------------------------#
+##
+################################################################################
+#
+# --------------------------#
+# Load Libraries#
+# --------------------------#
+library(raster)#
+library(rgdal)#
+library(maptools)#
+library(proj4)#
+library(sp)#
+library(maps)#
+library(rasterVis)#
+library(rgeos)#
+library(car)#
+# -----------
+# --------------------------#
+sites <- read.csv("DOE_sites_ross_sampled.csv")#
+sites <- SpatialPointsDataFrame(coords=sites[,c("long", "lat")], sites, proj4string=CRS("+proj=longlat +datum=WGS84"))#
+summary(sites)
+ecosystems <- raster("labeled_ecosystems_30m/final_labeled_prod4_mmu9pxl_30m_dd83_w_subsec.img")#
+ecosystems
+ecosys.meta <- read.csv("labeled_ecosystems_30m/final_labeled_prod4_mmu9pxl_30m_dd83_w_subsec.img.vat.csv")#
+summary(ecosys.meta)
+ecosys.meta <- read.csv("labeled_ecosystems_30m/final_labeled_prod4_mmu9pxl_30m_dd83_w_subsec.img.vat.csv")
+summary(ecosys.meta)
+# Subsetting just the columns we're interested in #
+ecosys.meta2 <- ecosys.meta[,c(7,8,10)]#
+names(ecosys.meta2) <- c("Ecosys.ID", "Ecosys.Name", "Ecosys.General")#
+summary(ecosys.meta2)
+# A quick-and-dirty plotting of the ecosystems -- #
+# note: there should be more customizeable ways to do this with GGPLOT, but I haven't tried it yet#
+pdf("DOE_Ecosystems_USGS.pdf")#
+plot(ecosystems)#
+map("state", plot=T, add=T, lty="solid", col="gray30", lwd=1.5)#
+plot(sites[,], pch=01, add=T, col="indianred1", cex=2, lwd=4,)#
+plot(sites[sites$site.name=="Valles Caldera Mixed Conifer",], pch=08, add=T, col="firebrick3", cex=3, lwd=6)#
+dev.off()
+plot(ecosystems)#
+map("state", plot=T, add=T, lty="solid", col="gray30", lwd=1.5)#
+plot(sites[,], pch=01, add=T, col="indianred1", cex=2, lwd=4,)#
+plot(sites[sites$site.name=="Valles Caldera Mixed Conifer",], pch=08, add=T, col="firebrick3", cex=3, lwd=6)
+sites$Ecosys.ID <- as.factor(extract(ecosystems, sites))#
+sites <- merge(data.frame(sites), ecosys.meta2, all.x=T, all.y=F)#
+summary(sites)#
+summary(data.frame(sites))#
+data.frame(sites)
+nldc <z- raster("nlcd_2011_landcover_2011_edition_2014_10_10/nlcd_2011_landcover_2011_edition_2014_10_10.img")
+nldc <- raster("nlcd_2011_landcover_2011_edition_2014_10_10/nlcd_2011_landcover_2011_edition_2014_10_10.img")
+sites <- spTransform(sites, projection(nldc))
+nldc <- raster("nlcd_2011_landcover_2011_edition_2014_10_10/nlcd_2011_landcover_2011_edition_2014_10_10.img")
+sites <- spTransform(sites, projection(nldc))
+?spTransform
+library(sp)
+sites <- spTransform(sites, projection(nldc))
+class(mldc)
+class(nldc)
+projection(nldc)
+CRS(nldc)
+?spTransform
+summary(sites)
+class(sites)
+sites <- SpatialPointsDataFrame(coords=sites[,c("long", "lat")], sites, proj4string=CRS("+proj=longlat +datum=WGS84"))
+sites <- spTransform(sites, projection(nldc))
+nldc <- raster("nlcd_2011_landcover_2011_edition_2014_10_10/nlcd_2011_landcover_2011_edition_2014_10_10.img")#
+#
+# sites <- read.csv("DOE_sites_ross_sampled.csv")#
+sites <- SpatialPointsDataFrame(coords=sites[,c("long", "lat")], sites, proj4string=CRS("+proj=longlat +datum=WGS84"))#
+sites <- spTransform(sites, projection(nldc))#
+summary(sites)
+usa <- map("state", plot=F, fill=T)#
+ids <- sapply(strsplit(usa$names, ":"), function(x) x[1])#
+usa.sp <- map2SpatialLines(usa, IDs=usa$names, proj4string=CRS("+proj=longlat +datum=WGS84"))#
+usa.sp <- spTransform(usa.sp, projection(nldc))
+plot(nldc)#
+plot(usa.sp, add=T, lwd=1, col="gray30")#
+plot(sites[,], pch=01, add=T, col="black", cex=2, lwd=3,)#
+plot(sites[sites$site.name=="Valles Caldera Mixed Conifer",], pch=08, add=T, col="firebrick3", cex=3, lwd=6)
+plot(nldc)#
+plot(usa.sp, add=T, lwd=1, col="gray30")#
+plot(sites[,], pch=01, add=T, col="black", cex=2, lwd=3,)#
+plot(sites[sites$site.name=="Valles Caldera Mixed Conifer",], pch=08, add=T, col="firebrick3", cex=3, lwd=6)
+sites$NLCD.ID <- as.factor(extract(nldc, sites))#
+#
+unique(sites$NLCD.ID)#
+sites$NLDC.Name <- recode(sites$NLCD.ID, "'41'='Deciduous Forest'; '42'='Evergreen Forest'; '43'='Mixed Forest'; '90'='Woody Wetlands'")#
+# sites <- merge(data.frame(sites), ecosys.meta2, all.x=T, all.y=F)#
+summary(sites)#
+summary(data.frame(sites))#
+data.frame(sites)#
+sites <- sites[,!(names(sites) %in% c("long.1", "lat.1", "long.2", "lat.2", "optional"))]#
+summary(sites)
+?extract
